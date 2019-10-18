@@ -1,0 +1,17 @@
+{
+  "analyzer": {
+    "port": 9000
+  },
+  "dev": {
+    "host": "https://jdev.bhsgd.net"
+  },
+  "prod": {
+    "host": "https://m.bhsgd.net"
+  },
+  "publish": {
+    "serverBasePath": "./",
+    "projectName": "myApp",
+    "entryFileName": "myApp.html"
+  },
+  "HMR_PORT": 3000
+}
