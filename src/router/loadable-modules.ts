@@ -1,29 +1,19 @@
 import * as React from 'react'
 import Loadable from 'react-loadable'
-import Loading from '@module/common/loading'
-import NotFound from '@module/common/404'
-import routes from '@router/paths';
+import { ES6Module } from 'sora-react-service'
+import Loading from '../module/common/loading'
+import NotFound from '../module/common/404'
 
-function commonLoadable(loader): React.ComponentType & LoadableExport.LoadableComponent {
+export function commonLoadable(loader): React.ComponentType & LoadableExport.LoadableComponent {
   return Loadable({
     loader,
     loading: Loading,
   })
 }
 
-// const modules: {
-//   path: string;
-//   component;
-// }[] = routes.map(route => ({
-//   path: route.path,
-//   component: commonLoadable(() => (
-//     typeof route.dir === 'function'
-//       ? Promise.resolve(route.dir()).then(path => (path ? import(`../module/${path}`) : {
-//         __esModule: true,
-//         default: NotFound,
-//       }))
-//       : import(`../module/${route.dir}`)
-//   )),
-// }))
-//
-// export default modules
+export function validateImport(dir: string | null): Promise<ES6Module> {
+  return dir ? import(`../module${dir}.tsx`) : Promise.resolve({
+    __esModule: true,
+    default: NotFound,
+  })
+}

@@ -1,23 +1,30 @@
+import { hot } from 'react-hot-loader/root'
 import * as React from 'react'
 import { Provider } from 'mobx-react'
-import { observable, action, computed } from 'mobx'
-import styled from 'styled-components'
+import { observable, runInAction, set } from 'mobx'
+import { observer } from 'mobx-react'
+import { ModuleRoute } from 'sora-react-service'
+import RouteComponent from './router';
+import routes from './router/paths';
+import Store, { IStore } from './store';
 
-interface PropsType {
+interface StateTypes {
+  routes: ModuleRoute;
+  store: IStore;
 }
 
-class Component extends React.Component<PropsType> {
-  componentDidMount(): void {
-    const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/convertibility/exchange/get?v=2')
-    xhr.send('{"data":{}}')
-  }
+@observer
+class Base extends React.PureComponent {
+  @observable routes: ModuleRoute<IStore> = routes
+  @observable store: IStore = new Store()
 
   render() {
     return (
-      <Provider></Provider>
+      <Provider store={this.store} routes={this.routes}>
+        <RouteComponent />
+      </Provider>
     )
   }
 }
 
-export default Component
+export default hot(Base)

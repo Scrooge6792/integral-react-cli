@@ -7,7 +7,9 @@ const compiler = webpack(webpackConfig)
 
 new WebpackDevServer(compiler, {
   hot: true,
-  historyApiFallback: true,
+  historyApiFallback: {
+    index: '/build/index.html',
+  },
   quiet: false,
   noInfo: false,
   host: '127.0.0.1',

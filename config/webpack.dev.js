@@ -5,17 +5,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ErrorOverlayPlugin = require('error-overlay-webpack-plugin')
 
 const HotMiddleWareConfig = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000'
+const ReactHotLoader = 'react-hot-loader/patch'
 
 module.exports = merge(require('./webpack.config'), {
   mode: 'development',
-  entry: [path.resolve(__dirname, '../index.tsx')],
+  entry: [HotMiddleWareConfig, ReactHotLoader, path.resolve(__dirname, '../index.tsx')],
   devtool: '#cheap-module-source-map',
-  devServer: {
-    hot: true,
-    contentBase: path.resolve(__dirname, '../build'),
-    publicPath: '/',
-    historyApiFallback: true,
-  },
+  // devServer: {
+  //   hot: true,
+  //   contentBase: path.resolve(__dirname, '../build'),
+  //   publicPath: '/',
+  // },
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),

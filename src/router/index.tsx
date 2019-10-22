@@ -1,23 +1,49 @@
 import * as React from 'react'
-import { Route } from 'react-router-dom'
-import { observable, action, computed } from 'mobx'
+import { Route, Switch } from 'react-router-dom'
+import { observable, action, computed, reaction } from 'mobx'
+import { observer, inject, disposeOnUnmount } from 'mobx-react'
 import styled from 'styled-components'
 import _ from 'lodash'
-import { IRoute } from 'sora-react-service';
+import { IRoute, ModuleRoute } from 'sora-react-service'
+import { IStore } from '@src/store';
+import { validateImport, commonLoadable } from './loadable-modules'
+import NotFound from '../module/common/404';
+import Welcome from '@module/welcome';
 
 interface PropsType {
-  routes: IRoute[];
+  store: IStore;
+  routes: ModuleRoute<IStore>;
 }
 
-class Routes extends React.Component<PropsType> {
+@observer
+class RouteComponent extends React.PureComponent<PropsType> {
   @computed
-  get routeData() {
-    return _.partition(this.props.routes, route => route.always)
+  get routes() {
+    return _.values(this.props.routes).map(route => {
+      const { dir, ...rest } = route
+      if (dir) {
+        return {
+          ...rest,
+          component: commonLoadable(() => (typeof dir === 'function'
+            ? Promise.resolve(dir(this.props.store)).then(validateImport)
+            : validateImport(dir))),
+        }
+      }
+      return rest
+    })
   }
 
   render() {
-    return null
+    return (
+      <Switch>
+        {this.routes.map(route => (
+          <Route exact {...route} />
+        ))}
+        <Route exact path='/' component={commonLoadable(() => validateImport('/welcome'))} />
+        <NotFound />
+      </Switch>
+    )
   }
 }
 
-export default Routes
+export default inject('store', 'routes')(RouteComponent) as React.ComponentType<{}>

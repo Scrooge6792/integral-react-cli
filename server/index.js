@@ -15,7 +15,7 @@ const BUILD_PATH = path.resolve(__dirname, '../build')
 const app = express()
 const compiler = webpack(webpackConfig)
 
-const authProxy = proxy('!/sockjs-node', {
+const authProxy = proxy({
   target: host,
   changeOrigin: true,
 })
@@ -24,16 +24,18 @@ app.engine('.html', require('ejs').__express)
 app.set('views', BUILD_PATH)
 app.set('view engine', 'html')
 
-// app.use(webpackDevMiddleware(compiler, {
-//   publicPath: webpackConfig.output.publicPath,
-// }))
-// app.use(webpackHotMiddleware(compiler, {
-//   path: '/__webpack_hmr',
-// }))
+app.use(webpackDevMiddleware(compiler, {
+  publicPath: webpackConfig.output.publicPath,
+}))
+app.use(webpackHotMiddleware(compiler, {
+  path: '/__webpack_hmr',
+}))
 app.use(express.static(BUILD_PATH))
-// app.use(authProxy)
+app.use('*', authProxy)
+app.use(require('connect-history-api-fallback')())
 
 app.get('/', (req, res) => {
+  console.log('GET request')
   res.render(BUILD_PATH)
 })
 
