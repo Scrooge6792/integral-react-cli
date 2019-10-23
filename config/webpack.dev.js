@@ -11,11 +11,6 @@ module.exports = merge(require('./webpack.config'), {
   mode: 'development',
   entry: [HotMiddleWareConfig, ReactHotLoader, path.resolve(__dirname, '../index.tsx')],
   devtool: '#cheap-module-source-map',
-  // devServer: {
-  //   hot: true,
-  //   contentBase: path.resolve(__dirname, '../build'),
-  //   publicPath: '/',
-  // },
   plugins: [
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
